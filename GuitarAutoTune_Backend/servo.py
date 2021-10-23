@@ -20,7 +20,7 @@ def set_tuning_servo(servo_id, tuning_speed):
         return
 
     # build control string
-    buf = ""
+    buf = "s"
     for i in range(0, servo_id):
         buf += ','
     buf += str(scale(tuning_speed, -1.0, 1.0, 1000, 2000))
