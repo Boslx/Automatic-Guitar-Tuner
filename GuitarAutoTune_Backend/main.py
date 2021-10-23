@@ -7,15 +7,16 @@
 # a pitch detection object. There is also NumPy
 # as well to convert format between PyAudio into
 # the Aubio.
+import argparse
+import os
+
 import aubio
 import numpy as num
 import pyaudio
-import sys
-import os
-import argparse
 import serial.tools.list_ports
 from dotenv import load_dotenv
 
+import chords
 import servo
 
 load_dotenv()
@@ -29,22 +30,7 @@ METHOD = "default"
 SAMPLE_RATE = 44100
 HOP_SIZE = BUFFER_SIZE // 2
 PERIOD_SIZE_IN_FRAME = HOP_SIZE
-
-referencePitch = 440
-
-
-def frequency(referenceFrequency, semitonesDifference):
-    return referenceFrequency * pow(2, (semitonesDifference / 12))
-
-
-TONES = {
-    'E4': frequency(referencePitch, -5.000),
-    'B3': frequency(referencePitch, -10.000),
-    'G3': frequency(referencePitch, -14.000),
-    'D3': frequency(referencePitch, -19.000),
-    'A2': frequency(referencePitch, -24.000),
-    'E2': frequency(referencePitch, -29.000),
-}
+CHORD = chords.STANDARD_TONES
 
 
 def main(args):
@@ -86,17 +72,19 @@ def main(args):
         # print(str(pitch) + " " + str(volume))
 
         # Find the nearest note in Tones
-        noteName, supposedPitch = min(TONES.items(), key=lambda x: abs(pitch - x[1]))
+        noteName, supposedPitch = min(CHORD.items(), key=lambda x: abs(pitch - x[1]))
         differenceHz = supposedPitch - pitch
 
         print(f"[{noteName}] {differenceHz}")
+
 
 parser = argparse.ArgumentParser(description='Utility for automatically tuning musical instruments')
 
 if __name__ == "__main__":
     serial_ports = serial.tools.list_ports.comports()
     ports = [p[0] for p in serial_ports]
-    parser.add_argument('-d', '--device', choices=ports, required=False, help='Serial port of the Arduino', default=os.getenv('GAT_SERIAL_PORT'))
+    parser.add_argument('-d', '--device', choices=ports, required=False, help='Serial port of the Arduino',
+                        default=os.getenv('GAT_SERIAL_PORT'))
     args = parser.parse_args()
 
     servo.init(args.device)
