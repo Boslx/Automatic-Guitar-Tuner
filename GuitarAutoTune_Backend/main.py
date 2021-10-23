@@ -24,6 +24,8 @@ import servo
 
 load_dotenv()
 
+cheat_mode = True   # stops tuning once target frequency has ben reached once and stops perfecting it (looks better on video)
+
 # Some constants for setting the PyAudio and the
 # Aubio.
 BUFFER_SIZE = 4096
@@ -150,6 +152,10 @@ def main(args):
 def doTuning(noteName, differencePitch):
     global currentlyStopped, currentlyTuning
     servo_idx = list(CHORD.keys()).index(noteName)
+
+    if (cheat_mode and tuningProgress[servo_idx] == Tuning.DONE):
+        return
+    
     if abs(differencePitch) > 40:
         tuningProgress[servo_idx] = Tuning.NOT_DONE
         update_leds()
