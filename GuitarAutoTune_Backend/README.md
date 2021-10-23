@@ -10,3 +10,5 @@ pip install -r requirements.txt
 ```
 GAT_SERIAL_PORT=...
 ```
+
+The serial port can also be set via the command line, but it defaults to the env file if none is given.
