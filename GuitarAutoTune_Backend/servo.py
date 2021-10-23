@@ -32,7 +32,21 @@ def set_tuning_servo(servo_id, tuning_speed):
     ser.write(buf.encode())
     ser.flush()
     time.sleep(0.01)
-    
+
+def set_led(servo_id, color):
+    # build control string
+    buf = "l"
+    for i in range(0, servo_id):
+        buf += ','
+    buf += f"{color:06X}"
+    for i in range(servo_id, 5):
+        buf += ','
+    buf += '\n'
+
+    # print(buf)
+    ser.write(buf.encode())
+    ser.flush()
+    time.sleep(0.01)
 
 def stop_tuning_servos():
     ser.write("1500,1500,1500,1500,1500,1500\n".encode())
