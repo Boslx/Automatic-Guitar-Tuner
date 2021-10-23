@@ -16,6 +16,7 @@ import numpy as num
 import pyaudio
 import serial.tools.list_ports
 from dotenv import load_dotenv
+from pynput import keyboard
 
 import chords
 import servo
@@ -38,15 +39,28 @@ currentlyTuning = False
 currentlyStopped = False
 
 lastEmergencyStop = 0
+manualModeWatchedString = None
+
+
+def on_press(key):
+    if hasattr(key, 'char'):
+        for i in range(1, 7):
+            if key.char == str(i):
+                global manualModeWatchedString
+                manualModeWatchedString = (i - 1)
+
 
 def main(args):
+    listener = keyboard.Listener(
+        on_press=on_press)
+    listener.start()
+
     # Initiating PyAudio object.
     pA = pyaudio.PyAudio()
     # Open the microphone stream.
     mic = pA.open(format=FORMAT, channels=CHANNELS,
                   rate=SAMPLE_RATE, input=True,
-                  frames_per_buffer=PERIOD_SIZE_IN_FRAME
-                  )
+                  frames_per_buffer=PERIOD_SIZE_IN_FRAME)
 
     # Initiating Aubio's pitch detection object.
     pDetection = aubio.pitch(METHOD, BUFFER_SIZE,
@@ -61,7 +75,7 @@ def main(args):
     # Infinite loop!
     while True:
         # Always listening to the microphone.
-        data = mic.read(PERIOD_SIZE_IN_FRAME)
+        data = mic.read(PERIOD_SIZE_IN_FRAME, exception_on_overflow=False)
         # Convert into number that Aubio understand.
         samples = num.frombuffer(data, dtype=aubio.float_type)
         # Finally get the pitch.
@@ -96,7 +110,12 @@ def main(args):
         # print(str(pitch) + " " + str(volume))
 
         # Find the nearest note in Tones
-        noteName, supposedPitch = min(CHORD.items(), key=lambda x: abs(pitch - x[1]))
+        if manualModeWatchedString is not None:
+            noteName = list(CHORD)[manualModeWatchedString]
+            supposedPitch = CHORD[noteName]
+        else:
+            noteName, supposedPitch = min(CHORD.items(), key=lambda x: abs(pitch - x[1]))
+
         differenceHz = supposedPitch - pitch
 
         print(f"[{noteName}] {differenceHz:7.3f}  {volume}")
@@ -108,11 +127,15 @@ def main(args):
                 doTuning(noteName, differenceHz)
 
 
-
 def doTuning(noteName, differencePitch):
     global currentlyStopped, currentlyTuning
-    if abs(differencePitch) > 40 or abs(differencePitch) < 0.2:
-        currentlyTuning = False
+    if abs(differencePitch) > 40:
+        stopTuning()
+        print("Difference between supposed and actual pitch above 40hz")
+        return
+
+    if abs(differencePitch) < 0.2:
+        stopTuning()
         return
 
     currentlyTuning = True
@@ -120,11 +143,16 @@ def doTuning(noteName, differencePitch):
 
     servo_idx = list(CHORD.keys()).index(noteName)
 
-
     if (differencePitch > 0):
         servo.set_tuning_servo(servo_idx, 0.15)
     else:
         servo.set_tuning_servo(servo_idx, -0.15)
+
+
+def stopTuning():
+    global currentlyTuning, manualModeWatchedString
+    currentlyTuning = False
+    manualModeWatchedString = None
 
 
 parser = argparse.ArgumentParser(description='Utility for automatically tuning musical instruments')

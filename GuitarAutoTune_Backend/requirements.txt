@@ -2,3 +2,4 @@ aubio
 numpy
 pyaudio
 python-dotenv
+pynput
