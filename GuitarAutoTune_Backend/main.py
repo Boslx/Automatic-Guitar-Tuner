@@ -11,6 +11,7 @@ import aubio
 import numpy as num
 import pyaudio
 import sys
+import bisect
 
 # Some constants for setting the PyAudio and the
 # Aubio.
@@ -21,6 +22,15 @@ METHOD = "default"
 SAMPLE_RATE = 44100
 HOP_SIZE = BUFFER_SIZE // 2
 PERIOD_SIZE_IN_FRAME = HOP_SIZE
+
+TONES = {
+    'E4': 329.63,
+    'B3': 246.94,
+    'G3': 196.00,
+    'D3': 146.83,
+    'A2': 110.00,
+    'E2': 82.41,
+}
 
 
 def main(args):
@@ -34,6 +44,7 @@ def main(args):
     # Initiating Aubio's pitch detection object.
     pDetection = aubio.pitch(METHOD, BUFFER_SIZE,
                              HOP_SIZE, SAMPLE_RATE)
+
     # Set unit.
     pDetection.set_unit("Hz")
     # Frequency under -40 dB will considered
@@ -57,7 +68,14 @@ def main(args):
         volume = "{:6f}".format(volume)
 
         # Finally print the pitch and the volume.
-        print(str(pitch) + " " + str(volume))
+        #print(str(pitch) + " " + str(volume))
+
+        # Find the nearest note in Tones
+        noteName, supposedPitch = min(TONES.items(), key=lambda x: abs(pitch - x[1]))
+        differenceHz = supposedPitch - pitch
+
+        print(f"[{noteName}] {differenceHz}")
+
 
 
 if __name__ == "__main__":
