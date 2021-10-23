@@ -120,5 +120,6 @@ SONG = [
 def getStringMission(song, string):
     stringMission = []
     for chord in song:
-        stringMission.append(list(chord.values())[0])
+        stringMission.append(list(chord.values())[string])
     return stringMission
+
