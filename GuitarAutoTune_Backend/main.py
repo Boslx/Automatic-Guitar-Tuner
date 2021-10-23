@@ -105,11 +105,11 @@ def main(args):
         if (len(lastNotes) > 4):
             lastNotes.pop()
             if (len(set(lastNotes)) == 1):  # check if last 4 notes are the same
-                doStuff(differenceHz)
+                doTuning(noteName, differenceHz)
 
 
 
-def doStuff(differencePitch):
+def doTuning(noteName, differencePitch):
     global currentlyStopped, currentlyTuning
     if abs(differencePitch) > 20 or abs(differencePitch) < 0.2:
         currentlyTuning = False
@@ -118,10 +118,13 @@ def doStuff(differencePitch):
     currentlyTuning = True
     currentlyStopped = False
 
+    servo_idx = list(CHORD.keys()).index(noteName)
+
+
     if (differencePitch > 0):
-        servo.set_tuning_servo(0, 0.1)
+        servo.set_tuning_servo(servo_idx, 0.1)
     else:
-        servo.set_tuning_servo(0, -0.1)
+        servo.set_tuning_servo(servo_idx, -0.1)
 
 
 parser = argparse.ArgumentParser(description='Utility for automatically tuning musical instruments')
