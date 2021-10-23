@@ -48,6 +48,15 @@ def set_led(servo_id, color):
     ser.flush()
     time.sleep(0.01)
 
+def set_leds(colors):
+    buf = "l"
+    buf += ','.join([f"{color.value:06X}" for color in colors])
+    buf += '\n'
+    # print(buf)
+    ser.write(buf.encode())
+    ser.flush()
+    time.sleep(0.01)
+
 def stop_tuning_servos():
     ser.write("1500,1500,1500,1500,1500,1500\n".encode())
     ser.flush()

@@ -10,6 +10,7 @@
 import argparse
 import os
 import time
+from enum import Enum
 
 import aubio
 import numpy as num
@@ -23,6 +24,8 @@ import servo
 
 load_dotenv()
 
+cheat_mode = True   # stops tuning once target frequency has ben reached once and stops perfecting it (looks better on video)
+
 # Some constants for setting the PyAudio and the
 # Aubio.
 BUFFER_SIZE = 4096
@@ -34,13 +37,30 @@ HOP_SIZE = BUFFER_SIZE // 2
 PERIOD_SIZE_IN_FRAME = HOP_SIZE
 CHORD = chords.STANDARD_TONES
 
+colorTuningDone =       0x004000
+colorTuningInProgress = 0x401000
+colorTuningNeeded =     0x400000
+
+class Tuning(Enum):
+    NOT_DONE = colorTuningNeeded
+    IN_PROGRESS = colorTuningInProgress
+    DONE = colorTuningDone
+
 lastNotes = []
 currentlyTuning = False
 currentlyStopped = False
+tuningProgress =  [Tuning.NOT_DONE for i in range(6)] # contains colors directly
+prevTuningProgress = []
 
 lastEmergencyStop = 0
 manualModeWatchedString = None
 
+
+def update_leds():
+    global prevTuningProgress
+    if (tuningProgress != prevTuningProgress):
+        servo.set_leds(tuningProgress)
+    prevTuningProgress = tuningProgress.copy()
 
 def on_press(key):
     if hasattr(key, 'char'):
@@ -48,7 +68,6 @@ def on_press(key):
             if key.char == str(i):
                 global manualModeWatchedString
                 manualModeWatchedString = (i - 1)
-
 
 def main(args):
     listener = keyboard.Listener(
@@ -71,6 +90,9 @@ def main(args):
     # Frequency under -40 dB will considered
     # as a silence.
     pDetection.set_silence(-40)
+
+    # Set LED colors
+    update_leds()
 
     # Infinite loop!
     while True:
@@ -129,24 +151,42 @@ def main(args):
 
 def doTuning(noteName, differencePitch):
     global currentlyStopped, currentlyTuning
+    servo_idx = list(CHORD.keys()).index(noteName)
+
+    if (cheat_mode and tuningProgress[servo_idx] == Tuning.DONE):
+        return
+    
     if abs(differencePitch) > 40:
+        tuningProgress[servo_idx] = Tuning.NOT_DONE
+        update_leds()
         stopTuning()
         print("Difference between supposed and actual pitch above 40hz")
         return
 
     if abs(differencePitch) < 0.2:
+        tuningProgress[servo_idx] = Tuning.DONE
+        update_leds()
         stopTuning()
         return
+
+    # set tuning color
+    tuningProgress[servo_idx] = Tuning.IN_PROGRESS
+    update_leds()
 
     currentlyTuning = True
     currentlyStopped = False
 
-    servo_idx = list(CHORD.keys()).index(noteName)
+    if (abs(differencePitch) < 0.5):
+        speed = 0.05
+    elif (abs(differencePitch) < 1):
+        speed = 0.1
+    else:
+        speed = 0.15
 
     if (differencePitch > 0):
-        servo.set_tuning_servo(servo_idx, 0.15)
+        servo.set_tuning_servo(servo_idx, speed)
     else:
-        servo.set_tuning_servo(servo_idx, -0.15)
+        servo.set_tuning_servo(servo_idx, -speed)
 
 
 def stopTuning():
@@ -166,4 +206,5 @@ if __name__ == "__main__":
 
     servo.init(args.device)
 
+    print("Init done, ready for tuning!")
     main(args)
