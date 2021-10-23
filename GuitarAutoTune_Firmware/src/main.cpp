@@ -41,8 +41,11 @@ void parseReceivedMessage() {
             break;
         case PARSE_LED:
             if (curParameterIdx < NUM_LEDS) {
+                if (curString.length() == 0) {  // ignore empty parameter
+                    break;
+                }
                 uint32_t val = strtol(curString.c_str(), 0, 16);
-                leds[curParameterIdx] = CRGB(val);
+                leds[NUM_LEDS - 1 - curParameterIdx] = CRGB(val);
             }
             break;
     }
