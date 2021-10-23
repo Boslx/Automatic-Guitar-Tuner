@@ -47,8 +47,8 @@ void setup() {
     Serial.begin(115200);
 
     for (int i = 0; i < NUM_TUNING_SERVOS; i++) {
-        tuningServos[i].attach(tuningServoPins[i]);
         tuningServos[i].writeMicroseconds(1500);
+        tuningServos[i].attach(tuningServoPins[i]);
     }
 }
 
