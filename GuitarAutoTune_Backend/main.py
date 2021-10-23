@@ -111,7 +111,7 @@ def main(args):
 
 def doTuning(noteName, differencePitch):
     global currentlyStopped, currentlyTuning
-    if abs(differencePitch) > 20 or abs(differencePitch) < 0.2:
+    if abs(differencePitch) > 40 or abs(differencePitch) < 0.2:
         currentlyTuning = False
         return
 
@@ -122,9 +122,9 @@ def doTuning(noteName, differencePitch):
 
 
     if (differencePitch > 0):
-        servo.set_tuning_servo(servo_idx, 0.1)
+        servo.set_tuning_servo(servo_idx, 0.15)
     else:
-        servo.set_tuning_servo(servo_idx, -0.1)
+        servo.set_tuning_servo(servo_idx, -0.15)
 
 
 parser = argparse.ArgumentParser(description='Utility for automatically tuning musical instruments')
