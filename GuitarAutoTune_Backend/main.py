@@ -9,6 +9,7 @@
 # the Aubio.
 import argparse
 import os
+import time
 
 import aubio
 import numpy as num
@@ -23,7 +24,7 @@ load_dotenv()
 
 # Some constants for setting the PyAudio and the
 # Aubio.
-BUFFER_SIZE = 2048
+BUFFER_SIZE = 4096
 CHANNELS = 1
 FORMAT = pyaudio.paFloat32
 METHOD = "default"
@@ -32,6 +33,11 @@ HOP_SIZE = BUFFER_SIZE // 2
 PERIOD_SIZE_IN_FRAME = HOP_SIZE
 CHORD = chords.STANDARD_TONES
 
+lastNotes = []
+currentlyTuning = False
+currentlyStopped = False
+
+lastEmergencyStop = 0
 
 def main(args):
     # Initiating PyAudio object.
@@ -57,15 +63,31 @@ def main(args):
         # Always listening to the microphone.
         data = mic.read(PERIOD_SIZE_IN_FRAME)
         # Convert into number that Aubio understand.
-        samples = num.fromstring(data,
-                                 dtype=aubio.float_type)
+        samples = num.frombuffer(data, dtype=aubio.float_type)
         # Finally get the pitch.
         pitch = pDetection(samples)[0]
         # Compute the energy (volume)
         # of the current frame.
-        volume = num.sum(samples ** 2) / len(samples)
-        if volume < 5e-05:
+        volume = num.sum(samples ** 2) / len(samples) * 10000
+        # cutoff if volume is too silent
+        # if volume < 5:
+        #     currentlyTuning = False
+
+        # disable servos every second to prevent issues with logic
+        global lastEmergencyStop
+        if (time.time() - lastEmergencyStop > 1.0):
+            lastEmergencyStop = time.time()
+            servo.stop_tuning_servos()
+
+        global currentlyStopped, currentlyTuning
+        currentlyTuning = (volume > 5)
+        if (not currentlyStopped and not currentlyTuning):
+            servo.stop_tuning_servos()
+            servo.stop_tuning_servos()
+            currentlyStopped = True
+        if (not currentlyTuning):
             continue
+
         # Format the volume output so it only
         # displays at most six numbers behind 0.
         # volume = "{:6f}".format(volume)
@@ -77,12 +99,24 @@ def main(args):
         noteName, supposedPitch = min(CHORD.items(), key=lambda x: abs(pitch - x[1]))
         differenceHz = supposedPitch - pitch
 
-        print(f"[{noteName}] {differenceHz}")
+        print(f"[{noteName}] {differenceHz:7.3f}  {volume}")
+
+        lastNotes.insert(0, noteName)
+        if (len(lastNotes) > 4):
+            lastNotes.pop()
+            if (len(set(lastNotes)) == 1):  # check if last 4 notes are the same
+                doStuff(differenceHz)
+
 
 
 def doStuff(differencePitch):
-    if abs(differencePitch) > 20:
+    global currentlyStopped, currentlyTuning
+    if abs(differencePitch) > 20 or abs(differencePitch) < 0.2:
+        currentlyTuning = False
         return
+
+    currentlyTuning = True
+    currentlyStopped = False
 
     if (differencePitch > 0):
         servo.set_tuning_servo(0, 0.1)

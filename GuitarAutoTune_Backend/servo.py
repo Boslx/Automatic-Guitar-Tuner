@@ -3,7 +3,10 @@ import os
 import time
 from dotenv import load_dotenv
 
+ser = serial.Serial()
+
 def init(port):
+    global ser
     ser = serial.Serial(port, baudrate=115200)
     time.sleep(2)   # wait until Arduino booted
 
@@ -27,9 +30,14 @@ def set_tuning_servo(servo_id, tuning_speed):
 
     # print(buf)
     ser.write(buf.encode())
+    ser.flush()
+    time.sleep(0.01)
     
-    pass
 
+def stop_tuning_servos():
+    ser.write("1500,1500,1500,1500,1500,1500\n".encode())
+    ser.flush()
+    time.sleep(0.01)
 
 if __name__ == "__main__":
     # ser.write("1400,1500,1400,1500,1400,1500\n".encode())
