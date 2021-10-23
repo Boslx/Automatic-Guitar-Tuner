@@ -63,7 +63,9 @@ def main(args):
         pitch = pDetection(samples)[0]
         # Compute the energy (volume)
         # of the current frame.
-        # volume = num.sum(samples ** 2) / len(samples)
+        volume = num.sum(samples ** 2) / len(samples)
+        if volume < 5e-05:
+            continue
         # Format the volume output so it only
         # displays at most six numbers behind 0.
         # volume = "{:6f}".format(volume)
@@ -76,6 +78,16 @@ def main(args):
         differenceHz = supposedPitch - pitch
 
         print(f"[{noteName}] {differenceHz}")
+
+
+def doStuff(differencePitch):
+    if abs(differencePitch) > 20:
+        return
+
+    if (differencePitch > 0):
+        servo.set_tuning_servo(0, 0.1)
+    else:
+        servo.set_tuning_servo(0, -0.1)
 
 
 parser = argparse.ArgumentParser(description='Utility for automatically tuning musical instruments')
