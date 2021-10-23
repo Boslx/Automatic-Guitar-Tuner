@@ -11,6 +11,14 @@ import aubio
 import numpy as num
 import pyaudio
 import sys
+import os
+import argparse
+import serial.tools.list_ports
+from dotenv import load_dotenv
+
+import servo
+
+load_dotenv()
 
 # Some constants for setting the PyAudio and the
 # Aubio.
@@ -83,6 +91,14 @@ def main(args):
 
         print(f"[{noteName}] {differenceHz}")
 
+parser = argparse.ArgumentParser(description='Utility for automatically tuning musical instruments')
 
 if __name__ == "__main__":
-    main(sys.argv)
+    serial_ports = serial.tools.list_ports.comports()
+    ports = [p[0] for p in serial_ports]
+    parser.add_argument('-d', '--device', choices=ports, required=False, help='Serial port of the Arduino', default=os.getenv('GAT_SERIAL_PORT'))
+    args = parser.parse_args()
+
+    servo.init(args.device)
+
+    main(args)

@@ -1,12 +1,11 @@
 import serial
-from dotenv import load_dotenv
 import os
 import time
+from dotenv import load_dotenv
 
-load_dotenv()
-
-ser = serial.Serial(os.getenv('GAT_SERIAL_PORT'), baudrate=115200)
-time.sleep(2)   # wait until Arduino booted
+def init(port):
+    ser = serial.Serial(port, baudrate=115200)
+    time.sleep(2)   # wait until Arduino booted
 
 def scale(x, in_min, in_max, out_min, out_max):
     return int((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
@@ -34,6 +33,8 @@ def set_tuning_servo(servo_id, tuning_speed):
 
 if __name__ == "__main__":
     # ser.write("1400,1500,1400,1500,1400,1500\n".encode())
+    load_dotenv()
+    init(os.getenv('GAT_SERIAL_PORT'))
     set_tuning_servo(0, 0)
     set_tuning_servo(5, 0.1)
     try:
