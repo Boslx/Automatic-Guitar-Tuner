@@ -43,7 +43,11 @@ https://user-images.githubusercontent.com/28631446/138694342-bd304a0d-b934-4950-
    - [ ] Geldüberweisung erfolgt
    - [ ] Besprechung intern über Zukunft des Projektes
   
- 7. Präsentation
+ 7. FineTuning
+  
+  ![IMG_3387 2504](https://user-images.githubusercontent.com/93015032/138917471-12d430f8-1cc5-40b2-a0b9-2c283898f428.PNG)
+  
+ 8. Präsentation
 
  ![FineTuning-konvertiert-1](https://user-images.githubusercontent.com/93015032/138875977-a0fdfdff-e0ed-452c-bd05-44359c01f816.jpg)
 
@@ -52,6 +56,8 @@ https://user-images.githubusercontent.com/28631446/138694342-bd304a0d-b934-4950-
  ![FineTuning-konvertiert-3](https://user-images.githubusercontent.com/93015032/138876080-cc9ad20c-434d-418a-b347-b82746e4efb9.jpg)
 
  ![FineTuning-konvertiert-4](https://user-images.githubusercontent.com/93015032/138876092-9d76bfa6-39fa-4342-a5de-6fa5e9799562.jpg)
+ 
+ ![IMG_3387 2504](https://user-images.githubusercontent.com/93015032/138917471-12d430f8-1cc5-40b2-a0b9-2c283898f428.PNG)
 
  
 > Hack Hack Hurra
