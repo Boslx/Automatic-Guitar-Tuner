@@ -43,7 +43,10 @@ https://user-images.githubusercontent.com/28631446/138694342-bd304a0d-b934-4950-
    - [ ] Geldüberweisung erfolgt
    - [ ] Besprechung intern über Zukunft des Projektes
   
- 7. Präsentation
+ 7. Logo
+ ![Logo](https://user-images.githubusercontent.com/93015032/138918480-4af84af9-6517-4558-9fd4-15deb657b2fa.jpg)
+
+ 8. Präsentation
 
  ![FineTuning-konvertiert-1](https://user-images.githubusercontent.com/93015032/138875977-a0fdfdff-e0ed-452c-bd05-44359c01f816.jpg)
 
