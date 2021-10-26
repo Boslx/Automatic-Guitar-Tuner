@@ -13,11 +13,14 @@ https://user-images.githubusercontent.com/28631446/138694342-bd304a0d-b934-4950-
 
 **Ablauf:**
 1. Brainstorming
+
 2. Themenauswahl
-  - Grund: Mischung aus Programmierung und Mechanik
+  - Grund: Mischung aus Programmierung und Mechanik -> Software und Hardware
+  
 3. Recherche
   - jede Saite hat eine eigene Frequenz
   - Akkorde spielen -> 4 Chords
+  
 4. Umsetzung
   - Coding für Servo-Steuerung & Frequenzerkennung & Frequenzfestlegung der Saiten
   - Gitarre messen und Gestell für Servos erstellen
@@ -32,13 +35,13 @@ https://user-images.githubusercontent.com/28631446/138694342-bd304a0d-b934-4950-
   - [x] Videoaufnahme & Schnitt
   - [x] Namemsgebung der Gruppe und des Produktes
   - [x] Logo-Entwurf
-  
  
  6. Fazit
    - [x] Pitch gewonnen
    - [x] Kontakt mit Beyerdynamic aufgenommen
    - [ ] Terminabsprache für Besichtigung
    - [ ] Geldüberweisung erfolgt
+   - [ ] Besprechung intern über Zukunft des Projektes
   
  7. Präsentation
 
