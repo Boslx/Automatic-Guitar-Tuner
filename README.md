@@ -24,8 +24,21 @@ https://user-images.githubusercontent.com/28631446/138694342-bd304a0d-b934-4950-
   
 5. Pitch
   - [x] Brainstorming
-  - [ ] Festlegung der Message
-  - [ ] Erstellung der Präsi
+  - [x] Festlegung der Message/Vision
+  - [x] Erstellung der Präsi
+  - [x] Inhalt der Folien
+  - [x] Folienanzahl einhalten max. 4 Folien
+  - [x] Aufteilung der Präsentation
+  - [x] Videoaufnahme & Schnitt
+  - [x] Namemsgebung der Gruppe und des Produktes
+  - [x] Logo-Entwurf
+  
+ 
+ 6. Fazit
+   - [x] Pitch gewonnen
+   - [x] Kontakt mit Beyerdynamic aufgenommen
+   - [ ] Terminabsprache für Besichtigung
+   - [ ] Geldüberweisung erfolgt
   
 > Hack Hack Hurra
 
